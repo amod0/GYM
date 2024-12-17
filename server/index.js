@@ -21,8 +21,15 @@ app.get("/", (req, res) => {
 // // Add a POST route to create a Member
 app.post("/members", async (req, res) => {
   try {
-    const { name, email, phone, membership_type, start_date, end_date } =
-      req.body;
+    const {
+      name,
+      email,
+      password,
+      phone,
+      membership_type,
+      start_date,
+      end_date,
+    } = req.body;
 
     const newMember = await db.Member.create({
       name,
@@ -40,6 +47,6 @@ app.post("/members", async (req, res) => {
   }
 });
 
-app.use("/api/auth");
+// app.use("/api/auth");
 
 app.listen(PORT, () => console.log(`Server Started on Port ${PORT}`));

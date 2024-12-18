@@ -29,7 +29,6 @@ const Member = sequelize.define(
     password: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      // defaultValue: "placeholder_password", // Add a default value for existing rows
       validate: {
         notEmpty: true,
         len: [8, 16], // length of the password between 8 to 16.

@@ -78,8 +78,6 @@ Member.beforeCreate(async (member) => {
     const hashed = await bcrypt.hash(member.password, 10);
     member.password = hashed;
   }
-
-  .
 });
 
 Member.prototype.comparePassword = async function (attempt, next) {

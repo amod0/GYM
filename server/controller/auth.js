@@ -14,34 +14,45 @@ export const register = async (req, res, next) => {
       token,
     });
   } catch (err) {
-    if (err.code === 1100) {
-      err.message = "sorry, That User is aready exist";
+    if (err.name === "SequelizeUniqueConstraintError") {
+      err.message = "Sorry, This Email is aready exist";
     }
     next(err);
   }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
   try {
-    const member = await db.Member.findOne(req.body.email);
-    const { member_id, email } = member;
-    const valid = await member.comparePassword(req.body.password);
-
-    if (valid) {
-      const token = jwt.sign({ member_id, email }, process.env.SECRET, {
-        expiresIn: "1h",
+    const member = await db.Member.findOne({
+      where: { email: req.body.email },
+    });
+    if (!member) {
+      return res.status(404).json({
+        message: "Invalide Email or Password",
       });
-
-      res.json({
-        member_id,
-        email,
-        token,
-      });
-    } else {
-      throw new Error();
     }
+
+    const valid = await member.comparePassword(req.body.password);
+    if (!valid) {
+      return res.status(401).json({
+        message: "Invalid Email or Password",
+      });
+    }
+
+    // If both email and password are valid, destructure details
+    const { member_id, email, name } = member;
+
+    const token = JWT.sign({ member_id, email, name }, process.env.SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.json({
+      member_id,
+      email,
+      name,
+      token,
+    });
   } catch (err) {
-    err.message = "Invalid Username or Password";
-    next(err);
+    res.status(500).json({ message: "An error occurred", error: err.message });
   }
 };

@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
 import sequelize from "../config/database.js";
 import bcrypt from "bcryptjs";
 
@@ -6,8 +7,8 @@ const Member = sequelize.define(
   "Member",
   {
     member_id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: uuidv4,
       primaryKey: true,
     },
     name: {
@@ -73,7 +74,7 @@ const Member = sequelize.define(
   }
 );
 
-Member.beforeCreate(async (member) => {
+Member.beforeCreate(async (member, option) => {
   if (member.changed("password")) {
     const hashed = await bcrypt.hash(member.password, 10);
     member.password = hashed;

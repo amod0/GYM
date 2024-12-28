@@ -1,4 +1,5 @@
-import * as auth from "./auth.js";
+import * as member_auth from "./member_auth.js";
+import * as staff_auth from "./staff_auth.js";
 
 export const notFound = (req, res, next) => {
   const err = new Error("Not Found");
@@ -13,7 +14,7 @@ export const errors = (err, req, res, next) => {
 };
 
 export default {
-  ...auth,
+  ...member_auth,
   notFound,
   errors,
 };

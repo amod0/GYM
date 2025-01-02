@@ -1,5 +1,6 @@
 import * as member_auth from "./member_auth.js";
-import * as staff_auth from "./staff_auth.js";
+// import * as staff_auth from "./staff_auth.js";
+import * as membershipController from "./membershipController.js";
 
 export const notFound = (req, res, next) => {
   const err = new Error("Not Found");
@@ -15,6 +16,7 @@ export const errors = (err, req, res, next) => {
 
 export default {
   ...member_auth,
+  ...membershipController,
   notFound,
   errors,
 };

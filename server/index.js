@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/auth", routes.auth);
+app.use("/api/memberships", routes.renew);
 
 app.use(controller.notFound);
 app.use(controller.errors);

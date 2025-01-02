@@ -44,20 +44,18 @@ const Member = sequelize.define(
         len: [7, 15], //Minmum 7, Maxmum 15 characters
       },
     },
-    membership_type: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      validate: {
-        isIn: [["1 Month", " 3 month", "6 month", "1 Year"]], // Define allowed membership types
+    membership_plan_id: {
+      type: DataTypes.UUID,
+      allowNull: true, // Allow null value if the member is not subscribed to any plan
+      references: {
+        model: "MembershipPlans",
+        key: "plan_id",
       },
     },
-    start_date: {
+    membership_expiry_date: {
       type: DataTypes.DATE,
       allowNull: false,
-    },
-    end_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      defaultValue: sequelize.literal("CURRENT_TIMESTAMP + INTERVAL '30 DAY'"),
     },
     status: {
       type: DataTypes.STRING(20),
@@ -74,6 +72,7 @@ const Member = sequelize.define(
   }
 );
 
+// Sequelize hooks: Before creating a new member, hash the password
 Member.beforeCreate(async (member, option) => {
   if (member.changed("password")) {
     const hashed = await bcrypt.hash(member.password, 10);
@@ -81,6 +80,7 @@ Member.beforeCreate(async (member, option) => {
   }
 });
 
+// Compare the password of the member
 Member.prototype.comparePassword = async function (attempt, next) {
   try {
     return await bcrypt.compare(attempt, this.password);

@@ -3,19 +3,58 @@ import db from "../models/index.js";
 
 export const register = async (req, res, next) => {
   try {
-    const member = await db.Member.create(req.body);
-    const { member_id, email } = member;
+    const { name, email, password, phone, membership_plan_id } = req.body;
 
-    const token = JWT.sign({ member_id, email }, process.env.SECRET);
+    let membership_expiry_date = null;
+
+    if (membership_plan_id) {
+      const plan = await db.MembershipPlan.findByPk(membership_plan_id);
+      if (!plan) {
+        return res.status(404).json({
+          message: "Invalid membership Type",
+        });
+      }
+
+      // Ensure the duration_in_days is a valid number
+      if (isNaN(plan.duration_in_days) || plan.duration_in_days <= 0) {
+        return res.status(400).json({
+          message: "Invalid membership plan duration",
+        });
+      }
+
+      const currentDate = new Date();
+      membership_expiry_date = new Date(
+        currentDate.getTime() + plan.duration_in_days * 24 * 60 * 60 * 1000
+      );
+
+      // Ensure the date is valid
+      if (isNaN(membership_expiry_date.getTime())) {
+        return res.status(400).json({
+          message: "Invalid membership expiry date",
+        });
+      }
+    }
+
+    // Creating members with calculated expiry date
+    const member = await db.Member.create({
+      ...req.body,
+      membership_expiry_date,
+    });
+    const { member_id } = member;
+
+    const token = JWT.sign({ member_id, email }, process.env.SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(201).json({
       member_id,
       email,
       token,
+      message: "member registered successfully",
     });
   } catch (err) {
     if (err.name === "SequelizeUniqueConstraintError") {
-      err.message = "Sorry, This Email is aready exist";
+      err.message = "Sorry, This Email is already exist";
     }
     next(err);
   }

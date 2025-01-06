@@ -15,15 +15,15 @@ db.Member = Member; //Register the Member model
 db.MembershipPlan = MembershipPlan; //Register the MembershipPlan model
 
 // Define associations
-Member.belongsTo(MembershipPlan,{
+Member.belongsTo(MembershipPlan, {
   foreignKey: "membership_plan_id",
-  as: "membershipPlan",
+  as: "MembershipPlans",
 });
 
-MembershipPlan.hasMany(Member,{
+MembershipPlan.hasMany(Member, {
   foreignKey: "membership_plan_id",
   as: "members",
-})
+});
 
 // Sync models with the database
 sequelize

@@ -1,9 +1,10 @@
 import authRoutes from "./auth.js";
-import membershipRoutes from "./membershipRoutes.js"
+import membershipRoutes from "./membership.js";
 
 const routes = {
   auth: authRoutes,
-  renew: membershipRoutes,
+  // renew: membershipRoutes,
+  membership: membershipRoutes,
 };
 
 export default routes;

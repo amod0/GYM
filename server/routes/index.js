@@ -3,7 +3,6 @@ import membershipRoutes from "./membership.js";
 
 const routes = {
   auth: authRoutes,
-  // renew: membershipRoutes,
   membership: membershipRoutes,
 };
 

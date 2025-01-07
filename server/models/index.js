@@ -17,7 +17,7 @@ db.MembershipPlan = MembershipPlan; //Register the MembershipPlan model
 // Define associations
 Member.belongsTo(MembershipPlan, {
   foreignKey: "membership_plan_id",
-  as: "MembershipPlans",
+  as: "membershipPlan",
 });
 
 MembershipPlan.hasMany(Member, {
